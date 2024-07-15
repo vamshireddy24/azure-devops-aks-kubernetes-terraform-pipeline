@@ -34,20 +34,20 @@ stages:
        - task: TerraformTaskV4@4
          displayName: Terraform Init
          inputs:
-          provider: 'azurerm'
-          command: 'init'
-          workingDirectory: '$(System.DefaultWorkingDirectory)/terraform-manifests'
-          backendAzureRmUseEnvironmentVariablesForAuthentication: false
-          backendServiceArm: 'terraform-aks-azurerm-svc'
-          backendAzureRmResourceGroupName: 'terraform-storage-rg'
-          backendAzureRmStorageAccountName: 'terraformstatevamshi'
-          backendAzureRmContainerName: 'tfstatefiles'
-          backendAzureRmKey: 'aks-base-tfstate'
+           provider: 'azurerm'
+           command: 'init'
+           workingDirectory: '$(System.DefaultWorkingDirectory)/terraform-manifests'
+           backendAzureRmUseEnvironmentVariablesForAuthentication: false
+           backendServiceArm: 'terraform-aks-azurerm-svc-con'
+           backendAzureRmResourceGroupName: 'terraform-storage-rg'
+           backendAzureRmStorageAccountName: 'terraformstatevamshi'
+           backendAzureRmContainerName: 'tfstatefiles'
+           backendAzureRmKey: 'aks-base-tfstate'
       
        - task: TerraformTaskV4@4
          displayName: Terraform validate
          inputs:
-          provider: 'azurerm'
-          command: 'validate'
-          workingDirectory: '$(System.DefaultWorkingDirectory)/terraform-manifests'
+           provider: 'azurerm'
+           command: 'validate'
+           workingDirectory: '$(System.DefaultWorkingDirectory)/terraform-manifests'
         
