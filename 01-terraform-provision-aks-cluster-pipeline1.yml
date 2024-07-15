@@ -81,7 +81,7 @@ stages:
                   provider: 'azurerm'
                   command: 'init'
                   workingDirectory: '$(System.DefaultWorkingDirectory)/terraform-manifests'
-                  backendAzureRmUseEnvironmentVariablesForAuthentication: true
+                  backendAzureRmUseEnvironmentVariablesForAuthentication: false
                   backendServiceArm: 'terraform-aks-azurerm-svc-con'
                   backendAzureRmResourceGroupName: 'terraform-storage-rg'
                   backendAzureRmStorageAccountName: 'terraformstatevamshi'
