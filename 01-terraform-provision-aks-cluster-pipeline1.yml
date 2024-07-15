@@ -44,7 +44,7 @@ stages:
            backendAzureRmResourceGroupName: 'terraform-storage-rg'
            backendAzureRmStorageAccountName: 'terraformstatevamshi'
            backendAzureRmContainerName: 'tfstatefiles'
-           backendAzureRmKey: 
+           backendAzureRmKey: 'aks-base-tfstate'
       
        - task: TerraformTaskV4@4
          displayName: Terraform validate
