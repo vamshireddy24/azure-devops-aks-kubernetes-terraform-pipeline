@@ -97,6 +97,7 @@ stages:
                   commandOptions: '-var ssh_public_key=$(sshkey.secureFilePath) -var environment=$(Dev_Env) -out $(Pipeline.Workspace)/terraform-manifests/$(Dev_Env)-$(Build.BuildId).out'
                   environmentServiceNameAzureRM: 'terraform-aks-azurerm-svc-con'
               - task: TerraformTaskV4@4
+                displayName: Terraform apply
                 inputs:
                   provider: 'azurerm'
                   command: 'apply'
