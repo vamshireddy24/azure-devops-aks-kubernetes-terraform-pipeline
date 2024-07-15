@@ -8,6 +8,12 @@ trigger:
 
 pool:
   name: 'azureagentpool'
+#define variables for env
+variables:
+- name: Dev_Env
+  value: dev
+- name: QA_Env
+  value: qa
 
 # Stage-1: Terraform Validate Stage
 ## Step-1: Publish Artifacts to Pipeline (Pipeline artifacts provide a way to share files between stages in a pipeline or between different pipelines. )
@@ -38,7 +44,7 @@ stages:
            backendAzureRmResourceGroupName: 'terraform-storage-rg'
            backendAzureRmStorageAccountName: 'terraformstatevamshi'
            backendAzureRmContainerName: 'tfstatefiles'
-           backendAzureRmKey: 'aks-base-tfstate'
+           backendAzureRmKey: 
       
        - task: TerraformTaskV4@4
          displayName: Terraform validate
@@ -46,4 +52,53 @@ stages:
            provider: 'azurerm'
            command: 'validate'
            workingDirectory: '$(System.DefaultWorkingDirectory)/terraform-manifests'
-        
+
+# Stage-2: Deploy Stages for Dev & QA
+# Deployment-1: Deploy Dev AKS Cluster
+## Step-1: Define Variables for environments
+## Step-2: Download SSH Secure File
+## Step-3: Terraform Initialize (State Storage to store in Azure Storage Account for Dev AKS Cluster)
+## Step-4: Terraform Plan (Create Plan)
+## Step-5: Terraform Apply (Use the plan created in previous step)
+- stage: DeployAKSCluster
+  jobs:
+    - deployment: DeploymentAKSCluster
+      displayName: DeployDevAKSCluster
+      pool:
+       name: 'azureagentpool'
+      environment: $(Dev_Env)
+      strategy:
+       runOnce:
+         deploy:
+           steps:
+              - task: DownloadSecureFile@1
+                displayName: Download SSH key
+                inputs:
+                  secureFile: 'id_rsa.pub'
+              - task: TerraformTaskV4@4
+                displayName: Terraform Init
+                inputs:
+                  provider: 'azurerm'
+                  command: 'init'
+                  workingDirectory: '$(System.DefaultWorkingDirectory)/terraform-manifests'
+                  backendAzureRmUseEnvironmentVariablesForAuthentication: true
+                  backendServiceArm: 'terraform-aks-azurerm-svc-con'
+                  backendAzureRmResourceGroupName: 'terraform-storage-rg'
+                  backendAzureRmStorageAccountName: 'terraformstatevamshi'
+                  backendAzureRmContainerName: 'tfstatefiles'
+                  backendAzureRmKey: 'aks-base-tfstate'
+              - task: TerraformTaskV4@4
+                displayName: Terrafporm Plan
+                inputs:
+                  provider: 'azurerm'
+                  command: 'plan'
+                  workingDirectory: '$(System.DefaultWorkingDirectory)/terraform-manifests'
+                  commandOptions: '-var ssh_public_key=$(sshkey.secureFilePath) -var environment=$(Dev_Env) -out $(Pipeline.Workspace)/terraform-manifests-out/$(Dev_Env)-$(Build.BuildId).out'
+                  environmentServiceNameAzureRM: 'terraform-aks-azurerm-svc-con'
+              - task: TerraformTaskV4@4
+                displayName: Terraform Apply
+                inputs:
+                  provider: 'azurerm'
+                  command: 'apply'
+                  commandOptions: '$(Pipeline.Workspace)/terraform-manifests/$(Dev_Env)-$(Build.BuildId).out'
+                  environmentServiceNameAzureRM: 'terraform-aks-azurerm-svc-con'
