@@ -73,6 +73,7 @@ stages:
            steps:
               - task: DownloadSecureFile@1
                 displayName: Download SSH key
+                name: sshkey
                 inputs:
                   secureFile: 'id_rsa.pub'
               - task: TerraformTaskV4@4
