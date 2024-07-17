@@ -29,9 +29,9 @@ stages:
        - task: PublishPipelineArtifact@1
          displayName: Publish Artifact
          inputs:
-          targetPath: '$(Pipeline.Workspace)/terraform-manifests'
-          artifact: 'terraform-manifests'
-          publishLocation: 'pipeline'
+           targetPath: '$(System.DefaultWorkingDirectory)/terraform-manifests'
+           artifact: 'terraform-manifests'
+           publishLocation: 'pipeline'
        
        - task: TerraformTaskV4@4
          displayName: Terraform Init
