@@ -65,7 +65,7 @@ stages:
     - deployment: DeploymentAKSCluster
       displayName: DeployDevAKSCluster
       pool:
-       name: 'azureagentpool'
+       name: 'azureagent1'
       environment: $(Dev_Env)
       strategy:
        runOnce:
