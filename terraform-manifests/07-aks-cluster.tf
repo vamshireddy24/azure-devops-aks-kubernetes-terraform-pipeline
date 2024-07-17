@@ -11,7 +11,7 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
     name       = "systempool"
     vm_size    = "Standard_DS2_v2"
     orchestrator_version = data.azurerm_kubernetes_service_versions.current.latest_version
-    availability_zones   = [1, 2, 3]
+    zones   = [1, 2]
     enable_auto_scaling  = true
     max_count            = 3
     min_count            = 1
@@ -34,8 +34,16 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
 # Identity (System Assigned or Service Principal)
   identity { type = "SystemAssigned" }
 
+
+    oms-agent {
+        log_analytics_workspace_id = azurerm_log_analytics_workspace.insights.id
+    }
+    azure_active_directory_role_based_access_control{
+        managed = true
+        admin_group_object_ids = [azuread_group.aks_administrators.id]
+    }
 # Add On Profiles
-  addon_profile {
+/*  addon_profile {
     azure_policy { enabled = true }
     oms_agent {
       enabled                    = true
@@ -50,7 +58,8 @@ role_based_access_control {
     managed                = true
     admin_group_object_ids = [azuread_group.aks_administrators.id]
   }
-}  
+}
+*/  
 
 # Windows Admin Profile
 windows_profile {
