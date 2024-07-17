@@ -35,7 +35,7 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
   identity { type = "SystemAssigned" }
 
 
-    oms-agent {
+    oms_agent {
         log_analytics_workspace_id = azurerm_log_analytics_workspace.insights.id
     }
     azure_active_directory_role_based_access_control{
